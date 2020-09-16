@@ -1,13 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { loadModules } from 'esri-loader';
 import LayerManager from './LayerManager';
+import PoiDialog from './PoiDialog';
 
 const WebMapView = () => {
-    const [mapView, setMapView] = useState(null);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [state, setState] = useState({
+        mapView: null,
+        selectedPoi: null,
+    });
+    
     const mapRef = useRef();
 
     useEffect(() => {
-        loadModules(["esri/Map", "esri/views/SceneView"]).then(
+        loadModules(['esri/Map', 'esri/views/SceneView']).then(
             ([ArcGISMap, MapView]) => {
                 const map = new ArcGISMap({
                     basemap: "hybrid",
@@ -18,18 +24,25 @@ const WebMapView = () => {
                     center: [-100, 30],
                     zoom: 3,
                 });
-                setMapView(view);
+                setState({
+                    ...state,
+                    mapView: view,
+                });
 
-                view.on("click", function (event) {
-                    var screenPoint = {
+                view.on('click', (event) => {
+                    const screenPoint = {
                         x: event.x,
                         y: event.y
                     };
 
-                    view.hitTest(screenPoint).then(function (response) {
+                    view.hitTest(screenPoint).then((response) => {
                         if (response.results.length) {
-                            var graphic = response.results[0];
-                            console.log(graphic.graphic.attributes);
+                            const graphic = response.results[0];
+                            setState({
+                                ...state,
+                                selectedPoi: graphic.graphic.attributes,
+                            });
+                            setDialogOpen(true);
                         }
                     });
                 });
@@ -45,7 +58,10 @@ const WebMapView = () => {
 
     return (
         <div>
-            <LayerManager mapView={mapView} />
+            <LayerManager mapView={state.mapView} selectedPoi={state.selectedPoi} />
+            {dialogOpen && (
+                <PoiDialog selectedPoi={state.selectedPoi} dialogOpen={dialogOpen} setDialogOpen={setDialogOpen} />
+            )}
             <div className="webmap" ref={mapRef} />
         </div>
     );

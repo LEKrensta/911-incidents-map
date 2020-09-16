@@ -4,8 +4,9 @@ import { loadModules } from 'esri-loader';
 
 const files = ['data/F01705150050.json', 'data/F01705150090.json']
 
-const LayerManager = ({ mapView }) => {
+const LayerManager = ({ mapView, selectedPoi, dialogOpen, setDialogOpen }) => {
     const [markers, setMakers] = useState([]);
+    
     useEffect(() => {
         Promise.all(files.map(file =>
             fetch(file).then(response => response.json())
@@ -37,9 +38,6 @@ const LayerManager = ({ mapView }) => {
                 graphics = pois.map(poi => new Graphic(poi));
                 mapView.graphics.addMany(graphics);
             });
-            return function removeGraphics() {
-                mapView && mapView.graphics.removeMany(graphics);
-            };
         }
     }, [markers, mapView]);
 
