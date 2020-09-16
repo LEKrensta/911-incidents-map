@@ -1,9 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
+import React from "react";
+import ReactDOM from "react-dom";
+import WebMapView from "./WebMapView";
 
-ReactDOM.render(
-    <App />,
-    document.getElementById('root')
-);
-
+ReactDOM.render(<WebMapView />, document.getElementById("root"));
