@@ -20,6 +20,6 @@ Improvments
 
 Screenshots
 -----------
-![Overview](images/screenshot.png)
-![Info Dialog](images/screenshot2.png)
-![Info Dialog Accordion](images/screenshot3.png)
+![Overview](images/screenshot.PNG)
+![Info Dialog](images/screenshot2.PNG)
+![Info Dialog Accordion](images/screenshot3.PNG)
