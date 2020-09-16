@@ -45,7 +45,7 @@ const WebMapView = () => {
 
     return (
         <div>
-            <LayerManager />
+            <LayerManager mapView={mapView} />
             <div className="webmap" ref={mapRef} />
         </div>
     );

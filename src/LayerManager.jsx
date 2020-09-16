@@ -1,14 +1,47 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AppBar, Toolbar, Typography } from '@material-ui/core'
-import useGraphics from './hooks/useGraphics';
+import { loadModules } from 'esri-loader';
 
-const LayerManager = () => {
+const files = ['data/F01705150050.json', 'data/F01705150090.json']
+
+const LayerManager = ({ mapView }) => {
+    const [markers, setMakers] = useState([]);
+    useEffect(() => {
+        Promise.all(files.map(file =>
+            fetch(file).then(response => response.json())
+            )).then(json => {
+                 setMakers(json);
+            });
+    }, []);
 
     useEffect(() => {
-        fetch('data/F01705150050.json')
-        .then((r) => (r.json())
-        .then((data) => console.log(data)));
-    }, []);
+        if (markers.length && mapView) {
+            let graphics = [];
+            loadModules(['esri/Graphic']).then(([Graphic]) => {
+                const pois = markers.map(poi => ({
+                    geometry: {
+                        type: 'point',
+                        latitude: poi.address.latitude,
+                        longitude: poi.address.longitude,
+                    },
+                    symbol: {
+                        type: "simple-marker",
+                        color: [226, 119, 40],
+                        outline: {
+                            color: [255, 255, 255],
+                            width: 2,
+                        },
+                    },
+                    attributes: poi,
+                }));
+                graphics = pois.map(poi => new Graphic(poi));
+                mapView.graphics.addMany(graphics);
+            });
+            return function removeGraphics() {
+                mapView && mapView.graphics.removeMany(graphics);
+            };
+        }
+    }, [markers, mapView]);
 
     return (
         <div>
@@ -24,4 +57,3 @@ const LayerManager = () => {
 };
 
 export default LayerManager;
-
