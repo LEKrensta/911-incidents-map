@@ -41,7 +41,7 @@ const WebMapView = () => {
             if (response.results.length) {
               const graphic = response.results[0];
               setState({
-                ...state,
+                mapView: view,
                 selectedPoi: graphic.graphic.attributes,
               });
               setDialogOpen(true);
